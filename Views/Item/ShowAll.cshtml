@@ -6,24 +6,45 @@
 
 <h1>Все посты</h1>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Текст</th>
-            <th>Автор</th>
-            <th>Дата создания</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+@foreach (var item in Model)
+{
+    <div class="post">
+        <h2>@item.Name</h2>
+        <p>@item.Text</p>
+        <p><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
+
+        <h4>Комментарии:</h4>
+        @if (item.Comments.Any())
         {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Text</td>
-                <td>@item.User.UserName</td>
-                <td>@item.CreationDate.ToString("dd.MM.yyyy HH:mm")</td>
-            </tr>
+            <ul>
+                @foreach (var comment in item.Comments)
+                {
+                    <li>
+                        <strong>@comment.User.UserName</strong> (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
+                        @if (comment.Replies.Any())
+                        {
+                            <ul>
+                                @foreach (var reply in comment.Replies)
+                                {
+                                    <li>
+                                        <strong>@reply.User.UserName</strong> (@reply.CreationDate.ToString("dd.MM.yyyy HH:mm")): @reply.Text
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
         }
-    </tbody>
-</table>
+        else
+        {
+            <p>Нет комментариев</p>
+        }
+
+        <form asp-action="AddComment" method="post">
+            <input type="hidden" name="itemId" value="@item.ItemId" />
+            <textarea name="text" required placeholder="Напишите ваш комментарий..."></textarea>
+            <button type="submit">Добавить комментарий</button>
+        </form>
+    </div>
+}

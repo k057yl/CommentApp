@@ -23,11 +23,12 @@ namespace CommentApp.Controllers
             _captchaService = captchaService;
         }
 
-        [HttpGet]
         public async Task<IActionResult> ShowAll()
         {
             var posts = await _context.Items
                 .Include(i => i.User)
+                .Include(i => i.Comments)
+                    .ThenInclude(c => c.User)
                 .OrderByDescending(i => i.CreationDate)
                 .ToListAsync();
 
@@ -45,7 +46,6 @@ namespace CommentApp.Controllers
         {
             var captchaCode = HttpContext.Session.GetString("CaptchaCode");
 
-            // Проверяем CAPTCHA
             if (captchaCode == null || itemDto.Captcha != captchaCode)
             {
                 ModelState.AddModelError("Captcha", "Неверный код CAPTCHA.");
@@ -56,7 +56,6 @@ namespace CommentApp.Controllers
                 ModelState.AddModelError("Captcha", "Неверный код CAPTCHA1111.");
             }
 
-            // Если ModelState не валиден
             if (!ModelState.IsValid)
             {
                 return View(itemDto);
@@ -103,11 +102,12 @@ namespace CommentApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddComment(CommentCreateDto model)
+        public async Task<IActionResult> AddComment(int itemId, string text, int? parentCommentId)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(text))
             {
-                return RedirectToAction("Details", new { id = model.ItemId });
+                ModelState.AddModelError("", "Комментарий не может быть пустым.");
+                return RedirectToAction("Index");
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -116,19 +116,25 @@ namespace CommentApp.Controllers
                 return Unauthorized();
             }
 
+            var item = await _context.Items.FindAsync(itemId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
             var comment = new Comment
             {
-                ItemId = model.ItemId,
+                ItemId = itemId,
                 UserId = user.Id,
-                Text = model.Text,
+                Text = text,
                 CreationDate = DateTime.UtcNow,
-                ParentCommentId = model.ParentCommentId
+                ParentCommentId = parentCommentId
             };
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", new { id = model.ItemId });
+            return RedirectToAction("ShowAll", "Item");
         }
 
         private CommentDto MapToDto(Comment comment)
