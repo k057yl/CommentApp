@@ -8,12 +8,12 @@ namespace CommentApp.Models.DTOs
 
         [Required]
         [MaxLength(30)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Required]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         [Required(ErrorMessage = "CAPTCHA обязательна.")]
-        public string Captcha { get; set; }
+        public string? Captcha { get; set; }
     }
 }

@@ -1,0 +1,33 @@
+﻿@model CommentApp.Models.Entities.Item
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+<p>@Model.Text</p>
+<p><b>Автор:</b> @Model.User.UserName</p>
+<p><b>Дата создания:</b> @Model.CreationDate</p>
+
+<h2>Комментарии</h2>
+<div>
+    @foreach (var comment in (List<CommentApp.Models.DTOs.CommentDto>)ViewBag.Comments)
+    {
+        <div style="margin-left: @(comment.ParentCommentId.HasValue ? "20px" : "0")">
+            <p><b>@comment.UserName:</b> @comment.Text</p>
+            <p><small>@comment.CreationDate</small></p>
+            <form asp-action="AddComment" method="post" style="display: inline;">
+                <input type="hidden" name="ItemId" value="@Model.ItemId" />
+                <input type="hidden" name="ParentCommentId" value="@comment.CommentId" />
+                <textarea name="Text" placeholder="Ответить..." required></textarea>
+                <button type="submit" class="btn btn-primary btn-sm">Отправить</button>
+            </form>
+        </div>
+    }
+</div>
+
+<h3>Добавить комментарий</h3>
+<form asp-action="AddComment" method="post">
+    <input type="hidden" name="ItemId" value="@Model.ItemId" />
+    <textarea name="Text" class="form-control" required></textarea>
+    <button type="submit" class="btn btn-success mt-2">Отправить</button>
+</form>
