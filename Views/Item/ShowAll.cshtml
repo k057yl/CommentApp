@@ -41,7 +41,7 @@
             <p>Нет комментариев</p>
         }
 
-        <form asp-action="AddComment" method="post">
+        <form asp-action="AddComment" asp-controller="Message" method="post">
             <input type="hidden" name="itemId" value="@item.ItemId" />
             <textarea name="text" required placeholder="Напишите ваш комментарий..."></textarea>
             <button type="submit">Добавить комментарий</button>
