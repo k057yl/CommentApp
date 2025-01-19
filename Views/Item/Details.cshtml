@@ -1,0 +1,35 @@
+﻿@model CommentApp.Models.Entities.Item
+
+@{
+    ViewData["Title"] = "Детали поста";
+}
+
+<a class="btn btn-secondary" href="/Item/ShowAll">Вернуться к списку</a>
+
+
+<h1>@Model.Name</h1>
+<p>@Model.Text</p>
+<p><strong>@Model.User.UserName</strong> | @Model.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
+
+<h4>Комментарии</h4>
+
+<div>
+    <a asp-action="Details" asp-route-id="@Model.ItemId" asp-route-sortOrder="@ViewData["UserNameSortParm"]">Сортировать по пользователю</a> |
+    <a asp-action="Details" asp-route-id="@Model.ItemId" asp-route-sortOrder="@ViewData["DateSortParm"]">Сортировать по дате</a>
+</div>
+
+@if (Model.Comments.Any())
+{
+    <ul>
+        @foreach (var comment in Model.Comments)
+        {
+            <li>
+                <strong>@comment.User.UserName</strong> (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Нет комментариев</p>
+}

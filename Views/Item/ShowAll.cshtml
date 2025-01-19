@@ -9,7 +9,7 @@
 @foreach (var item in Model)
 {
     <div class="post">
-        <h2>@item.Name</h2>
+        <a class="btn btn-secondary" asp-action="Details" asp-controller="Item" asp-route-id="@item.ItemId">@item.Name</a>
         <p>@item.Text</p>
         <p><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
 
@@ -19,7 +19,7 @@
             <ul>
                 @foreach (var comment in item.Comments)
                 {
-                    <li>
+                    <li>                        
                         <strong>@comment.User.UserName</strong> (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
                         @if (comment.Replies.Any())
                         {

@@ -72,19 +72,41 @@ namespace CommentApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string sortOrder)
         {
+            ViewData["UserNameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "user_name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
             var item = await _context.Items
                 .Include(i => i.User)
                 .Include(i => i.Comments)
-                .ThenInclude(c => c.Replies)
-                .ThenInclude(r => r.User)
+                    .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(i => i.ItemId == id);
 
             if (item == null)
             {
                 return NotFound();
             }
+
+            var commentsQuery = item.Comments.AsQueryable();
+
+            switch (sortOrder)
+            {
+                case "user_name_desc":
+                    commentsQuery = commentsQuery.OrderByDescending(c => c.User.UserName);
+                    break;
+                case "Date":
+                    commentsQuery = commentsQuery.OrderBy(c => c.CreationDate);
+                    break;
+                case "date_desc":
+                    commentsQuery = commentsQuery.OrderByDescending(c => c.CreationDate);
+                    break;
+                default:
+                    commentsQuery = commentsQuery.OrderBy(c => c.User.UserName);
+                    break;
+            }
+
+            item.Comments = commentsQuery.ToList();
 
             return View(item);
         }
