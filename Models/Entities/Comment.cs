@@ -33,5 +33,6 @@ namespace CommentApp.Models.Entities
         public Comment ParentComment { get; set; }
 
         public ICollection<Comment> Replies { get; set; } = new List<Comment>();
+        public string? AttachmentPath { get; set; }
     }
 }

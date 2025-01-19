@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
-using CommentApp.Models.DTOs;
 
 namespace CommentApp.Controllers
 {
@@ -22,7 +21,7 @@ namespace CommentApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddComment(int itemId, string text, int? parentCommentId)
+        public async Task<IActionResult> AddComment(int itemId, string text, IFormFile attachment, int? parentCommentId)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -45,13 +44,28 @@ namespace CommentApp.Controllers
             var sanitizer = new HtmlSanitizer();
             string sanitizedText = sanitizer.Sanitize(text);
 
+            string attachmentPath = null;
+            if (attachment != null && attachment.Length > 0)
+            {
+                var fileName = Path.GetFileName(attachment.FileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await attachment.CopyToAsync(stream);
+                }
+
+                attachmentPath = $"/images/{fileName}";
+            }
+
             var comment = new Comment
             {
                 ItemId = itemId,
                 UserId = user.Id,
                 Text = sanitizedText,
                 CreationDate = DateTime.UtcNow,
-                ParentCommentId = parentCommentId
+                ParentCommentId = parentCommentId,
+                AttachmentPath = attachmentPath
             };
 
             _context.Comments.Add(comment);
@@ -59,7 +73,7 @@ namespace CommentApp.Controllers
 
             return RedirectToAction("ShowAll", "Item", new { id = itemId });
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> ShowAll(string sortOrder)
         {

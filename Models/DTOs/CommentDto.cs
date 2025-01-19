@@ -9,5 +9,6 @@
         public int? ParentCommentId { get; set; }
         public List<CommentDto> Replies { get; set; } = new List<CommentDto>();
         public int ItemId { get; set; }
+        public string? AttachmentPath { get; set; }
     }
 }

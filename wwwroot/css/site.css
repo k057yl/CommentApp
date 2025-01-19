@@ -29,3 +29,87 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.posts-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Высота равна высоте окна */
+    padding: 20px;
+    background-color: #f0f8ff; /* Голубой фон */
+}
+
+.post {
+    width: 60%;
+    max-height: 500px;
+    background-color: #e0f7fa; /* Светло-голубой фон блока */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow-y: auto; /* Скроллинг внутри блока */
+}
+
+.post-title {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.post-text {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.post-user {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.comments-list, .replies-list {
+    margin-left: 20px;
+    padding-left: 10px;
+    list-style-type: square;
+}
+
+.comment-form textarea {
+    width: 100%;
+    resize: none;
+}
+
+.comment-form button {
+    width: 100%;
+}
+
+/* Начальные стили для изображения */
+.comment-image {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Плавное увеличение */
+}
+
+/* Стиль для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Убедимся, что модальное окно поверх */
+}
+
+.modal img {
+    width: 80%;
+    max-width: 500px;
+    transition: transform 0.5s ease; /* Плавное увеличение изображения */
+}

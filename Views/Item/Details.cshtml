@@ -6,7 +6,6 @@
 
 <a class="btn btn-secondary" href="/Item/ShowAll">Вернуться к списку</a>
 
-
 <h1>@Model.Name</h1>
 <p>@Model.Text</p>
 <p><strong>@Model.User.UserName</strong> | @Model.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
@@ -25,6 +24,15 @@
         {
             <li>
                 <strong>@comment.User.UserName</strong> (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
+
+                @if (!string.IsNullOrEmpty(comment.AttachmentPath))
+                {
+                    <div class="comment-attachment">
+                        <a href="javascript:void(0)" class="open-image">
+                            <img src="@comment.AttachmentPath" alt="Attachment" class="comment-image" style="width: 50px; height: 50px;" />
+                        </a>
+                    </div>
+                }
             </li>
         }
     </ul>
@@ -33,3 +41,7 @@ else
 {
     <p>Нет комментариев</p>
 }
+
+<div id="imageModal" class="modal">
+    <img id="modalImage" src="" alt="Expanded Image" />
+</div>

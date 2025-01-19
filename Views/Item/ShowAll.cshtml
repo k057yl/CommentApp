@@ -1,50 +1,67 @@
 ﻿@model IEnumerable<CommentApp.Models.Entities.Item>
 
+<script src="~/js/site.js?v=1.0"></script>
+
 @{
     ViewData["Title"] = "Все посты";
 }
 
 <h1>Все посты</h1>
 
-@foreach (var item in Model)
-{
-    <div class="post">
-        <a class="btn btn-secondary" asp-action="Details" asp-controller="Item" asp-route-id="@item.ItemId">@item.Name</a>
-        <p>@item.Text</p>
-        <p><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
+<div class="posts-container">
+    @foreach (var item in Model)
+    {
+        <div class="post">
+            <a class="btn btn-secondary post-title" asp-action="Details" asp-controller="Item" asp-route-id="@item.ItemId">@item.Name</a>
+            <p class="post-text">@item.Text</p>
+            <p class="post-user"><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
 
-        <h4>Комментарии:</h4>
-        @if (item.Comments.Any())
-        {
-            <ul>
-                @foreach (var comment in item.Comments)
-                {
-                    <li>                        
-                        <strong>@comment.User.UserName</strong> (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
-                        @if (comment.Replies.Any())
-                        {
-                            <ul>
-                                @foreach (var reply in comment.Replies)
-                                {
-                                    <li>
-                                        <strong>@reply.User.UserName</strong> (@reply.CreationDate.ToString("dd.MM.yyyy HH:mm")): @reply.Text
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>Нет комментариев</p>
-        }
+            <h4>Комментарии:</h4>
+            @if (item.Comments.Any())
+            {
+                <ul class="comments-list">
+                    @foreach (var comment in item.Comments)
+                    {
+                        <li>
+                            <strong>
+                                <a href="javascript:void(0)" class="copy-user" data-username="@comment.User.UserName">
+                                    @comment.User.UserName
+                                </a>
+                            </strong>
+                            (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
+                            @if (comment.Replies.Any())
+                            {
+                                <ul class="replies-list">
+                                    @foreach (var reply in comment.Replies)
+                                    {
+                                        <li>
+                                            <strong>
+                                                <a href="javascript:void(0)" class="copy-user" data-username="@reply.User.UserName">
+                                                    @reply.User.UserName
+                                                </a>
+                                            </strong>
+                                            (@reply.CreationDate.ToString("dd.MM.yyyy HH:mm")): @reply.Text
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Нет комментариев</p>
+            }
 
-        <form asp-action="AddComment" asp-controller="Message" method="post">
-            <input type="hidden" name="itemId" value="@item.ItemId" />
-            <textarea name="text" required placeholder="Напишите ваш комментарий..."></textarea>
-            <button type="submit">Добавить комментарий</button>
-        </form>
-    </div>
-}
+            <form class="comment-form" asp-action="AddComment" asp-controller="Message" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="itemId" value="@item.ItemId" />
+                <textarea name="text" required placeholder="Напишите ваш комментарий..."></textarea>
+
+                <input type="file" name="attachment" accept="image/*" />
+
+                <button type="submit">Добавить комментарий</button>
+            </form>
+        </div>
+    }
+</div>
