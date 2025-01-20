@@ -21,16 +21,38 @@ namespace CommentApp.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> ShowAll()
+        public IActionResult ShowAll(string sortOrder)
         {
-            var posts = await _context.Items
+            ViewData["UserNameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "user_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            var items = _context.Items
                 .Include(i => i.User)
                 .Include(i => i.Comments)
                     .ThenInclude(c => c.User)
-                .OrderByDescending(i => i.CreationDate)
-                .ToListAsync();
+                .ToList();
 
-            return View(posts);
+            foreach (var item in items)
+            {
+                if (sortOrder == "user_desc")
+                {
+                    item.Comments = item.Comments.OrderByDescending(c => c.User.UserName).ToList();
+                }
+                else if (sortOrder == "Date")
+                {
+                    item.Comments = item.Comments.OrderBy(c => c.CreationDate).ToList();
+                }
+                else if (sortOrder == "date_desc")
+                {
+                    item.Comments = item.Comments.OrderByDescending(c => c.CreationDate).ToList();
+                }
+                else
+                {
+                    item.Comments = item.Comments.OrderBy(c => c.User.UserName).ToList();
+                }
+            }
+
+            return View(items);
         }
 
         [HttpGet]

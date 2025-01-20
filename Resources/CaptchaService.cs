@@ -5,7 +5,8 @@ namespace CommentApp.Resources
 {
     public class CaptchaService
     {
-        private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        // Теперь разрешены буквы в верхнем и нижнем регистре, а также цифры
+        private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private readonly Random _random = new();
 
         /// <summary>

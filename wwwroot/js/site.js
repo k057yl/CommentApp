@@ -1,5 +1,4 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    // Модальное окно для просмотра изображений
     const images = document.querySelectorAll('.comment-image');
 
     const modal = document.getElementById('imageModal');
@@ -25,23 +24,21 @@
         modalImage.style.transform = 'scale(0)';
     });
 
-    // Функционал для добавления имени пользователя в комментарий
     const copyUserLinks = document.querySelectorAll(".copy-user");
 
     copyUserLinks.forEach(link => {
         link.addEventListener("click", function () {
-            const username = this.dataset.username;
+            const username = `@${this.dataset.username}`;
 
-            // Находим textarea в текущем посте
             const textarea = this.closest(".post").querySelector("textarea");
 
             if (textarea) {
-                // Получаем текущий текст в textarea
                 const currentText = textarea.value.trim();
 
-                // Обновляем текст в textarea, добавляем имя пользователя
-                textarea.value = `@${username} ${currentText}`;
-                textarea.focus();
+                if (!currentText.includes(username)) {
+                    textarea.value = `${username} ${currentText}`.trim();
+                    textarea.focus();
+                }
             }
         });
     });

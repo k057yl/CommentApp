@@ -12,22 +12,38 @@
     @foreach (var item in Model)
     {
         <div class="post">
+            <img class="user-avatar" src="~/images/default-avatar.png" alt="Avatar">
             <a class="btn btn-secondary post-title" asp-action="Details" asp-controller="Item" asp-route-id="@item.ItemId">@item.Name</a>
             <p class="post-text">@item.Text</p>
             <p class="post-user"><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
 
             <h4>Комментарии:</h4>
+
+            <div>
+                <a asp-action="ShowAll" asp-route-sortOrder="@ViewData["UserNameSortParm"]">Сортировать по пользователю</a> |
+                <a asp-action="ShowAll" asp-route-sortOrder="@ViewData["DateSortParm"]">Сортировать по дате</a>
+            </div>
+
             @if (item.Comments.Any())
             {
                 <ul class="comments-list">
                     @foreach (var comment in item.Comments)
                     {
+                        @if (!string.IsNullOrEmpty(comment.AttachmentPath))
+                        {
+                            <div class="comment-attachment">
+                                <a href="javascript:void(0)" class="open-image">
+                                    <img src="@comment.AttachmentPath" alt="Attachment" class="comment-image" style="width: 50px; height: 50px;" />
+                                </a>
+                            </div>
+                        }
                         <li>
                             <strong>
                                 <a href="javascript:void(0)" class="copy-user" data-username="@comment.User.UserName">
                                     @comment.User.UserName
                                 </a>
                             </strong>
+                            
                             (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
                             @if (comment.Replies.Any())
                             {
@@ -64,4 +80,7 @@
             </form>
         </div>
     }
+</div>
+<div id="imageModal" class="modal">
+    <img id="modalImage" src="" alt="Expanded Image" />
 </div>
