@@ -1,6 +1,37 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const images = document.querySelectorAll('.comment-image');
+    const avatars = [
+        "/images/default-avatar1.png",
+        "/images/default-avatar2.png",
+        "/images/default-avatar3.png",
+        "/images/default-avatar4.png",
+        "/images/default-avatar5.png"
+    ];
 
+    const userAvatars = document.querySelectorAll(".user-avatar");
+
+    userAvatars.forEach(function (avatar) {
+        const randomIndex = Math.floor(Math.random() * avatars.length);
+        avatar.src = avatars[randomIndex];
+    });
+
+    document.querySelectorAll("#previewButton").forEach(button => {
+        button.addEventListener("click", function () {
+            var commentText = this.closest("form").querySelector("#commentText").value;
+
+            if (commentText.trim() === "") {
+                alert("Пожалуйста, введите текст комментария.");
+                return;
+            }
+
+            var previewContent = this.closest("form").querySelector("#previewContent");
+            previewContent.textContent = commentText;
+
+            var previewArea = this.closest("form").querySelector("#previewArea");
+            previewArea.style.display = "block";
+        });
+    });
+
+    const images = document.querySelectorAll('.comment-image');
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
 
@@ -29,7 +60,6 @@
     copyUserLinks.forEach(link => {
         link.addEventListener("click", function () {
             const username = `@${this.dataset.username}`;
-
             const textarea = this.closest(".post").querySelector("textarea");
 
             if (textarea) {

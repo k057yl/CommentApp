@@ -45,14 +45,12 @@ namespace CommentApp.Controllers
                 return NotFound();
             }
 
-            // Используем HtmlValidator для проверки HTML в комментарии
             if (!_htmlValidator.ValidateHtml(text))
             {
                 ModelState.AddModelError("", "Сообщение содержит недопустимые теги или атрибуты.");
                 return RedirectToAction("ShowAll", "Item", new { id = itemId });
             }
 
-            // Инстанцируем HtmlSanitizer в методе
             var sanitizer = new HtmlSanitizer();
             var sanitizedText = sanitizer.Sanitize(text);
 

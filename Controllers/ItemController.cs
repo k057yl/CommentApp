@@ -24,16 +24,18 @@ namespace CommentApp.Controllers
             _htmlValidator = htmlValidator;
         }
 
-        public IActionResult ShowAll(string sortOrder)
+        public IActionResult ShowAll(string sortOrder, int page = 1)
         {
             ViewData["UserNameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "user_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            const int pageSize = 25;
 
             var items = _context.Items
                 .Include(i => i.User)
                 .Include(i => i.Comments)
                     .ThenInclude(c => c.User)
-                .ToList();
+                .AsQueryable();
 
             foreach (var item in items)
             {
@@ -55,7 +57,18 @@ namespace CommentApp.Controllers
                 }
             }
 
-            return View(items);
+            var totalItems = items.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var paginatedItems = items
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+
+            return View(paginatedItems);
         }
 
         [HttpGet]

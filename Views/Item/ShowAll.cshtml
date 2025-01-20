@@ -6,8 +6,6 @@
     ViewData["Title"] = "Все посты";
 }
 
-<h1>Все посты</h1>
-
 <div class="posts-container">
     @foreach (var item in Model)
     {
@@ -17,7 +15,7 @@
             <p class="post-text">@item.Text</p>
             <p class="post-user"><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
 
-            <h4>Комментарии:</h4>
+            <h2>Комментарии:</h2>
 
             <div>
                 <a asp-action="ShowAll" asp-route-sortOrder="@ViewData["UserNameSortParm"]">Сортировать по пользователю</a> |
@@ -26,8 +24,18 @@
 
             @if (item.Comments.Any())
             {
+                const int commentsPerPage = 25;
+                var totalComments = item.Comments.Count();
+                var totalPages = (int)Math.Ceiling(totalComments / (double)commentsPerPage);
+
+                int currentPage = ViewData["CurrentCommentPage"] != null ? (int)ViewData["CurrentCommentPage"] : 1;
+                var commentsToDisplay = item.Comments
+                .Skip((currentPage - 1) * commentsPerPage)
+                .Take(commentsPerPage)
+                .ToList();
+
                 <ul class="comments-list">
-                    @foreach (var comment in item.Comments)
+                    @foreach (var comment in commentsToDisplay)
                     {
                         <li>
                             @if (!string.IsNullOrEmpty(comment.AttachmentPath))
@@ -63,6 +71,23 @@
                         </li>
                     }
                 </ul>
+
+                <div class="pagination">
+                    @if (currentPage > 1)
+                    {
+                        <a href="@Url.Action("ShowAll", new { sortOrder = ViewData["DateSortParm"], page = ViewData["CurrentPage"], commentPage = currentPage - 1 })">&laquo; Предыдущая</a>
+                    }
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <a href="@Url.Action("ShowAll", new { sortOrder = ViewData["DateSortParm"], page = ViewData["CurrentPage"], commentPage = i })" class="@(currentPage == i ? "active" : "")">@i</a>
+                    }
+
+                    @if (currentPage < totalPages)
+                    {
+                        <a href="@Url.Action("ShowAll", new { sortOrder = ViewData["DateSortParm"], page = ViewData["CurrentPage"], commentPage = currentPage + 1 })">Следующая &raquo;</a>
+                    }
+                </div>
             }
             else
             {
@@ -71,7 +96,14 @@
 
             <form class="comment-form" asp-action="AddComment" asp-controller="Message" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="itemId" value="@item.ItemId" />
-                <textarea name="text" required placeholder="Напишите ваш комментарий..."></textarea>
+                <textarea id="commentText" name="text" required placeholder="Напишите ваш комментарий..."></textarea>
+
+                <button type="button" id="previewButton">Предпросмотр</button>
+
+                <div id="previewArea" style="display:none;">
+                    <h4>Предпросмотр комментария:</h4>
+                    <p id="previewContent"></p>
+                </div>
 
                 <input type="file" name="attachment" accept="image/*" />
 
@@ -80,25 +112,7 @@
         </div>
     }
 </div>
+
 <div id="imageModal" class="modal">
     <img id="modalImage" src="" alt="Expanded Image" />
 </div>
-
-<script>
-        document.addEventListener("DOMContentLoaded", function () {
-        const avatars = [
-            "/images/default-avatar1.png",
-            "/images/default-avatar2.png",
-            "/images/default-avatar3.png",
-            "/images/default-avatar4.png",
-            "/images/default-avatar5.png"
-        ];
-
-        const userAvatars = document.querySelectorAll(".user-avatar");
-
-        userAvatars.forEach(function (avatar) {
-            const randomIndex = Math.floor(Math.random() * avatars.length);
-            avatar.src = avatars[randomIndex];
-        });
-    });
-</script>

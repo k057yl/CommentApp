@@ -19,6 +19,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: rgb(204,255,255,1);
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -37,7 +38,8 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    background-color: #f0f8ff;
+    background-color: rgb(102,204,255,0.5);
+    border-radius: 3%;
 }
 
 .post {
@@ -60,7 +62,7 @@ body {
 }
 
 .post-text {
-    font-size: 1rem;
+    font-size: 2rem;
     margin-bottom: 10px;
     color: #333;
 }
@@ -119,11 +121,10 @@ body {
     margin-right: 10px;
 }
 
-/* Основные стили для контейнера */
 .create-post-container {
-    background-color: rgba(0, 51, 102, 0.5); /* темно-синий фон с 50% прозрачностью */
-    width: 70%; /* ширина 70% от экрана */
-    max-width: 800px; /* максимальная ширина 800px */
+    background-color: rgba(0, 51, 102, 0.5);
+    width: 70%;
+    max-width: 800px;
     height: auto;
     padding: 30px;
     border-radius: 10px;
@@ -132,12 +133,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0 auto; /* выравнивание по центру */
+    margin: 0 auto;
     position: relative;
-    top: 10%; /* отступ сверху, чтобы блок не прилипал к верхней части экрана */
+    top: 10%;
 }
 
-/* Стили для заголовка */
 .create-post-container h1 {
     color: #ffffff;
     margin-bottom: 30px;
@@ -145,28 +145,24 @@ body {
     text-align: center;
 }
 
-/* Стили для каждой группы формы */
 .create-post-container .form-group {
     width: 100%;
     margin-bottom: 15px;
 }
 
-/* Стили для меток формы */
 .create-post-container label {
     color: #ffffff;
     font-size: 16px;
 }
 
-/* Стили для полей ввода, делаем их шире */
 .create-post-container .form-control {
-    width: 90%; /* ширина 90% от контейнера */
-    max-width: 500px; /* максимальная ширина поля */
-    padding: 12px; /* увеличиваем padding для лучшего вида */
+    width: 90%;
+    max-width: 500px;
+    padding: 12px;
     border-radius: 5px;
     border: 1px solid #ddd;
 }
 
-/* Стили для кнопки */
 .create-post-container .btn {
     background-color: #0066cc;
     color: #ffffff;
@@ -182,12 +178,95 @@ body {
     background-color: #004d99;
 }
 
-/* Стили для сообщений об ошибках */
 .create-post-container .text-danger {
     color: #ff6666;
 }
 
-/* Стили для изображения CAPTCHA */
 .create-post-container .form-group img {
     margin-bottom: 15px;
+}
+
+#previewArea {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+}
+
+#previewContent {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Добавление анимации для плавного появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    padding: 30px;
+    background-color: #f4f4f9;
+    text-align: center;
+    background-image: url('/images/Background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(255, 216, 0, 0.2);
+    border-radius: 10px;
+    max-width: 100%;
+    animation: fadeIn 1s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.05);
 }
