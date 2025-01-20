@@ -1,0 +1,20 @@
+﻿services:
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: k057yl/testdzen
+    container_name: testdzen
+    ports:
+      - "5432:5432"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=autorack.proxy.rlwy.net;Port=23177;Database=railway;Username=postgres;Password=sUEkWlSmrvbtvOEysQuQPdboiWnXvZAC;SslMode=Require;TrustServerCertificate=True;
+    volumes:
+      - ./wwwroot/images:/app/wwwroot/images
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
