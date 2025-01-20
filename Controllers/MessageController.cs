@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using CommentApp.Resources;
 
 namespace CommentApp.Controllers
@@ -67,32 +69,27 @@ namespace CommentApp.Controllers
 
                 using (var imageStream = attachment.OpenReadStream())
                 {
-                    var image = System.Drawing.Image.FromStream(imageStream);
-                    int maxWidth = 320;
-                    int maxHeight = 240;
-
-                    if (image.Width > maxWidth || image.Height > maxHeight)
+                    using (var image = Image.Load(imageStream))
                     {
-                        var ratioX = (double)maxWidth / image.Width;
-                        var ratioY = (double)maxHeight / image.Height;
-                        var ratio = Math.Min(ratioX, ratioY);
+                        int maxWidth = 320;
+                        int maxHeight = 240;
 
-                        var newWidth = (int)(image.Width * ratio);
-                        var newHeight = (int)(image.Height * ratio);
+                        if (image.Width > maxWidth || image.Height > maxHeight)
+                        {
+                            var ratioX = (double)maxWidth / image.Width;
+                            var ratioY = (double)maxHeight / image.Height;
+                            var ratio = Math.Min(ratioX, ratioY);
 
-                        var resizedImage = new Bitmap(image, newWidth, newHeight);
+                            var newWidth = (int)(image.Width * ratio);
+                            var newHeight = (int)(image.Height * ratio);
+
+                            image.Mutate(x => x.Resize(newWidth, newHeight));
+                        }
 
                         var fileName = Path.GetFileName(attachment.FileName);
                         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-                        resizedImage.Save(filePath, image.RawFormat);
 
-                        attachmentPath = $"/images/{fileName}";
-                    }
-                    else
-                    {
-                        var fileName = Path.GetFileName(attachment.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-                        image.Save(filePath, image.RawFormat);
+                        await image.SaveAsync(filePath, new JpegEncoder());
 
                         attachmentPath = $"/images/{fileName}";
                     }

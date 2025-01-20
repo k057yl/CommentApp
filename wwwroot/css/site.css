@@ -198,7 +198,6 @@ body {
     line-height: 1.5;
 }
 
-/* ƒобавление анимации дл€ плавного по€влени€ */
 @keyframes fadeIn {
     from {
         opacity: 0;

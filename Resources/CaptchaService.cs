@@ -1,11 +1,13 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp.Processing;
 
 namespace CommentApp.Resources
 {
     public class CaptchaService
     {
-        // Теперь разрешены буквы в верхнем и нижнем регистре, а также цифры
         private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private readonly Random _random = new();
 
@@ -33,27 +35,37 @@ namespace CommentApp.Resources
         {
             const int width = 200;
             const int height = 60;
-            using var bitmap = new Bitmap(width, height);
-            using var graphics = Graphics.FromImage(bitmap);
 
-            graphics.Clear(Color.White);
+            using var image = new Image<Rgba32>(width, height);
 
-            // Рисуем текст CAPTCHA
-            using var font = new Font("Arial", 24, FontStyle.Bold | FontStyle.Italic);
-            using var brush = new SolidBrush(Color.Black);
-            graphics.DrawString(captchaText, font, brush, new PointF(10, 10));
+            image.Mutate(x => x.Fill(Color.White));
 
-            // Добавляем шум
+            Font font;
+
+            try
+            {
+                string fontPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "fonts", "ArialBlack.ttf");
+
+                var fontCollection = new FontCollection();
+                var family = fontCollection.Add(fontPath);
+                font = family.CreateFont(24);
+            }
+            catch (Exception)
+            {
+                font = SystemFonts.CreateFont("Arial", 24);
+            }
+
+            image.Mutate(x => x.DrawText(captchaText, font, Color.Black, new PointF(10, 10)));
+
             for (int i = 0; i < 100; i++)
             {
                 int x = _random.Next(width);
                 int y = _random.Next(height);
-                bitmap.SetPixel(x, y, Color.Gray);
+                image[x, y] = Color.Gray;
             }
 
-            // Сохраняем изображение в память
             using var memoryStream = new MemoryStream();
-            bitmap.Save(memoryStream, ImageFormat.Png);
+            image.Save(memoryStream, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
             return memoryStream.ToArray();
         }
     }
