@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using CommentApp.Resources;
 
 namespace CommentApp.Controllers
 {
@@ -13,11 +15,13 @@ namespace CommentApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly HtmlValidator _htmlValidator;
 
-        public MessageController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public MessageController(ApplicationDbContext context, UserManager<IdentityUser> userManager, HtmlValidator htmlValidator)
         {
             _context = context;
             _userManager = userManager;
+            _htmlValidator = htmlValidator;
         }
 
         [HttpPost]
@@ -41,21 +45,60 @@ namespace CommentApp.Controllers
                 return NotFound();
             }
 
+            // Используем HtmlValidator для проверки HTML в комментарии
+            if (!_htmlValidator.ValidateHtml(text))
+            {
+                ModelState.AddModelError("", "Сообщение содержит недопустимые теги или атрибуты.");
+                return RedirectToAction("ShowAll", "Item", new { id = itemId });
+            }
+
+            // Инстанцируем HtmlSanitizer в методе
             var sanitizer = new HtmlSanitizer();
-            string sanitizedText = sanitizer.Sanitize(text);
+            var sanitizedText = sanitizer.Sanitize(text);
 
             string attachmentPath = null;
             if (attachment != null && attachment.Length > 0)
             {
-                var fileName = Path.GetFileName(attachment.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var fileExtension = Path.GetExtension(attachment.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
                 {
-                    await attachment.CopyToAsync(stream);
+                    ModelState.AddModelError("", "Недопустимый формат файла. Допустимые форматы: JPG, PNG, GIF.");
+                    return RedirectToAction("ShowAll", "Item", new { id = itemId });
                 }
 
-                attachmentPath = $"/images/{fileName}";
+                using (var imageStream = attachment.OpenReadStream())
+                {
+                    var image = System.Drawing.Image.FromStream(imageStream);
+                    int maxWidth = 320;
+                    int maxHeight = 240;
+
+                    if (image.Width > maxWidth || image.Height > maxHeight)
+                    {
+                        var ratioX = (double)maxWidth / image.Width;
+                        var ratioY = (double)maxHeight / image.Height;
+                        var ratio = Math.Min(ratioX, ratioY);
+
+                        var newWidth = (int)(image.Width * ratio);
+                        var newHeight = (int)(image.Height * ratio);
+
+                        var resizedImage = new Bitmap(image, newWidth, newHeight);
+
+                        var fileName = Path.GetFileName(attachment.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                        resizedImage.Save(filePath, image.RawFormat);
+
+                        attachmentPath = $"/images/{fileName}";
+                    }
+                    else
+                    {
+                        var fileName = Path.GetFileName(attachment.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                        image.Save(filePath, image.RawFormat);
+
+                        attachmentPath = $"/images/{fileName}";
+                    }
+                }
             }
 
             var comment = new Comment
@@ -73,7 +116,7 @@ namespace CommentApp.Controllers
 
             return RedirectToAction("ShowAll", "Item", new { id = itemId });
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> ShowAll(string sortOrder)
         {

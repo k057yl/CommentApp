@@ -17,6 +17,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddSingleton<CaptchaService>();
+builder.Services.AddSingleton<HtmlValidator>();
 
 builder.Services.AddControllersWithViews();
 

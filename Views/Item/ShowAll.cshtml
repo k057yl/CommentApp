@@ -12,7 +12,7 @@
     @foreach (var item in Model)
     {
         <div class="post">
-            <img class="user-avatar" src="~/images/default-avatar.png" alt="Avatar">
+            <img class="user-avatar" src="/images/default-avatar.png" alt="Avatar">
             <a class="btn btn-secondary post-title" asp-action="Details" asp-controller="Item" asp-route-id="@item.ItemId">@item.Name</a>
             <p class="post-text">@item.Text</p>
             <p class="post-user"><strong>@item.User.UserName</strong> | @item.CreationDate.ToString("dd.MM.yyyy HH:mm")</p>
@@ -29,21 +29,20 @@
                 <ul class="comments-list">
                     @foreach (var comment in item.Comments)
                     {
-                        @if (!string.IsNullOrEmpty(comment.AttachmentPath))
-                        {
-                            <div class="comment-attachment">
-                                <a href="javascript:void(0)" class="open-image">
-                                    <img src="@comment.AttachmentPath" alt="Attachment" class="comment-image" style="width: 50px; height: 50px;" />
-                                </a>
-                            </div>
-                        }
                         <li>
+                            @if (!string.IsNullOrEmpty(comment.AttachmentPath))
+                            {
+                                <div class="comment-attachment">
+                                    <a href="javascript:void(0)" class="open-image">
+                                        <img src="@comment.AttachmentPath" alt="Attachment" class="comment-image" style="width: 50px; height: 50px;" />
+                                    </a>
+                                </div>
+                            }
                             <strong>
                                 <a href="javascript:void(0)" class="copy-user" data-username="@comment.User.UserName">
                                     @comment.User.UserName
                                 </a>
                             </strong>
-                            
                             (@comment.CreationDate.ToString("dd.MM.yyyy HH:mm")): @comment.Text
                             @if (comment.Replies.Any())
                             {
@@ -84,3 +83,22 @@
 <div id="imageModal" class="modal">
     <img id="modalImage" src="" alt="Expanded Image" />
 </div>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const avatars = [
+            "/images/default-avatar1.png",
+            "/images/default-avatar2.png",
+            "/images/default-avatar3.png",
+            "/images/default-avatar4.png",
+            "/images/default-avatar5.png"
+        ];
+
+        const userAvatars = document.querySelectorAll(".user-avatar");
+
+        userAvatars.forEach(function (avatar) {
+            const randomIndex = Math.floor(Math.random() * avatars.length);
+            avatar.src = avatars[randomIndex];
+        });
+    });
+</script>

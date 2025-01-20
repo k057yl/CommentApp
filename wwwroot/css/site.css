@@ -107,14 +107,87 @@ body {
 }
 
 .modal img {
-    width: 80%;
-    max-width: 500px;
+    max-width: 320px;
+    max-height: 240px;
     transition: transform 0.5s ease;
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+/* Основные стили для контейнера */
+.create-post-container {
+    background-color: rgba(0, 51, 102, 0.5); /* темно-синий фон с 50% прозрачностью */
+    width: 70%; /* ширина 70% от экрана */
+    max-width: 800px; /* максимальная ширина 800px */
+    height: auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* выравнивание по центру */
+    position: relative;
+    top: 10%; /* отступ сверху, чтобы блок не прилипал к верхней части экрана */
+}
+
+/* Стили для заголовка */
+.create-post-container h1 {
+    color: #ffffff;
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+/* Стили для каждой группы формы */
+.create-post-container .form-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Стили для меток формы */
+.create-post-container label {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+/* Стили для полей ввода, делаем их шире */
+.create-post-container .form-control {
+    width: 90%; /* ширина 90% от контейнера */
+    max-width: 500px; /* максимальная ширина поля */
+    padding: 12px; /* увеличиваем padding для лучшего вида */
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Стили для кнопки */
+.create-post-container .btn {
+    background-color: #0066cc;
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.create-post-container .btn:hover {
+    background-color: #004d99;
+}
+
+/* Стили для сообщений об ошибках */
+.create-post-container .text-danger {
+    color: #ff6666;
+}
+
+/* Стили для изображения CAPTCHA */
+.create-post-container .form-group img {
+    margin-bottom: 15px;
 }

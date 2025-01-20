@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Ganss.Xss;
+using CommentApp.Resources;
 
 namespace CommentApp.Controllers
 {
@@ -14,11 +15,13 @@ namespace CommentApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly HtmlValidator _htmlValidator;
 
-        public ItemController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ItemController(ApplicationDbContext context, UserManager<IdentityUser> userManager, HtmlValidator htmlValidator)
         {
             _context = context;
             _userManager = userManager;
+            _htmlValidator = htmlValidator;
         }
 
         public IActionResult ShowAll(string sortOrder)
@@ -64,7 +67,16 @@ namespace CommentApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ItemDTO itemDto, string Captcha)
         {
+            if (!_htmlValidator.ValidateHtml(itemDto.Name) || !_htmlValidator.ValidateHtml(itemDto.Text))
+            {
+                ModelState.AddModelError("", "Сообщение содержит недопустимые теги или атрибуты.");
+                return View(itemDto);
+            }
+
             var sanitizer = new HtmlSanitizer();
+
+            itemDto.Name = sanitizer.Sanitize(itemDto.Name);
+            itemDto.Text = sanitizer.Sanitize(itemDto.Text);
 
             var captchaCode = HttpContext.Session.GetString("CaptchaCode");
 
@@ -81,8 +93,8 @@ namespace CommentApp.Controllers
             var user = await _userManager.GetUserAsync(User);
             var item = new Item
             {
-                Name = sanitizer.Sanitize(itemDto.Name),
-                Text = sanitizer.Sanitize(itemDto.Text),
+                Name = itemDto.Name,
+                Text = itemDto.Text,
                 CreationDate = DateTime.UtcNow,
                 UserId = user.Id
             };
