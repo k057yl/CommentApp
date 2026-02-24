@@ -1,0 +1,21 @@
+.main-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  .form-section {
+    margin-bottom: 30px;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 40px 0;
+  }
+}

@@ -1,0 +1,24 @@
+<div class="comment-card">
+  <div class="comment-header">
+    <span class="user-name"><strong>{{ comment.userName }}</strong></span>
+    <span class="date">{{ formatDate(comment.createdAt) }}</span>
+  </div>
+
+  <div class="comment-body" [innerHTML]="comment.text"></div>
+
+  <div class="comment-attachments" *ngIf="comment.imagePath || comment.textFilePath">
+    <img *ngIf="comment.imagePath" [src]="comment.imagePath" alt="Attachment" class="preview-img">
+    <a *ngIf="comment.textFilePath" [href]="comment.textFilePath" target="_blank">📄 Скачать .txt</a>
+  </div>
+
+  <div class="comment-actions">
+    <button (click)="onReply()">Ответить</button>
+  </div>
+
+  <div class="replies-container" *ngIf="comment.replies.length">
+    <app-comment-item 
+      *ngFor="let child of comment.replies" 
+      [comment]="child"
+      (reply)="reply.emit($event)"> </app-comment-item>
+  </div>
+</div>

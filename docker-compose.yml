@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: comments_db
+    ports:
+      - "5432:5432"
+
+  cache:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    depends_on:
+      - db
+      - cache
+    environment:
+      ConnectionStrings__Default: "Host=db;Database=comments_db;Username=user;Password=password"
+      Redis__ConnectionString: "cache:6379"

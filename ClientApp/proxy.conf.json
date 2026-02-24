@@ -1,0 +1,23 @@
+{
+  "/api": {
+    "target": "https://localhost:7179",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/register": {
+    "target": "https://localhost:7179",
+    "secure": false
+  },
+  "/login": {
+    "target": "https://localhost:7179",
+    "secure": false
+  },
+  "/captcha": {
+    "target": "https://localhost:7179",
+    "secure": false
+  },
+  "/uploads": {
+    "target": "https://localhost:7179",
+    "secure": false
+  }
+}

@@ -1,0 +1,33 @@
+.comment-card {
+  border-left: 2px solid #ddd;
+  padding: 10px 0 10px 15px;
+  margin-top: 10px;
+  background: #fff;
+
+  .comment-header {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .comment-body {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  .preview-img {
+    max-width: 320px; // Как в ТЗ
+    max-height: 240px;
+    display: block;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+
+  .replies-container {
+    margin-left: 20px;
+    border-left: 1px dashed #ccc;
+  }
+}
