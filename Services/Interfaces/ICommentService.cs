@@ -6,7 +6,7 @@ namespace CommentApp.Services.Interfaces
     public interface ICommentService
     {
         Task<Comment> CreateCommentAsync(CreateCommentRequest request, string? imagePath, string? textFilePath);
-        Task<List<Comment>> GetRootCommentsAsync();
-        Task<(List<CommentDisplayDto> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize);
+        Task<List<CommentDisplayDto>> GetRootCommentsAsync();
+        Task<(List<CommentDisplayDto> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize, string sortBy = "date", string sortOrder = "desc");
     }
 }

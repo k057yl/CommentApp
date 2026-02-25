@@ -1,4 +1,3 @@
-// Палитра в стиле современного SaaS
 $primary: #3182ce;
 $primary-hover: #2b6cb0;
 $bg-main: #ffffff;
@@ -28,7 +27,6 @@ $success-text: #2c7a7b;
   }
 }
 
-// Шапка с инфо о пользователе
 .user-info {
   display: flex;
   align-items: center;
@@ -58,7 +56,6 @@ $success-text: #2c7a7b;
   }
 }
 
-// Секция ввода текста
 .textarea-section {
   padding: 16px;
 
@@ -79,7 +76,6 @@ $success-text: #2c7a7b;
   }
 }
 
-// Панель вложений
 .attachment-bar {
   display: flex;
   align-items: center;
@@ -111,7 +107,6 @@ $success-text: #2c7a7b;
   }
 }
 
-// Чипы файлов
 .chips-container {
   display: flex;
   gap: 8px;
@@ -142,7 +137,6 @@ $success-text: #2c7a7b;
   }
 }
 
-// Футер с капчей и кнопками
 .form-footer {
   display: flex;
   justify-content: space-between;
@@ -157,8 +151,8 @@ $success-text: #2c7a7b;
     gap: 10px;
 
     .visual-code {
-      background: #1a202c; // Dark Slate
-      color: #4fd1c5; // Neon Teal
+      background: #1a202c;
+      color: #4fd1c5;
       padding: 6px 14px;
       border-radius: 6px;
       font-family: 'Courier New', Courier, monospace;
@@ -221,10 +215,9 @@ $success-text: #2c7a7b;
   }
 }
 
-// Живой предпросмотр
 .live-preview {
   margin-top: 1.5rem;
-  background: #fffaf0; // Теплый желтоватый фон
+  background: #fffaf0;
   border: 1px dashed #f6ad55;
   border-radius: 12px;
   padding: 16px;
@@ -243,7 +236,6 @@ $success-text: #2c7a7b;
     line-height: 1.6;
     word-break: break-word;
     
-    // Стили для разрешенных тегов внутри превью
     ::ng-deep {
       code { background: #edf2f7; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
       strong { font-weight: 700; }

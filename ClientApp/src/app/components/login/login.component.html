@@ -1,0 +1,43 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo-circle">🔑</div>
+      <h1>Вход в систему</h1>
+      <p>Добро пожаловать в CommentApp</p>
+    </div>
+
+    <div class="test-credentials">
+      <p class="hint">Данные для тестирования (кликните для автозаполнения):</p>
+      <div class="account-chips">
+        @for (user of testAccounts; track user) {
+          <button type="button" class="chip" (click)="fillForm(user)">
+            <span class="role">{{ user }}</span>
+          </button>
+        }
+      </div>
+      <div class="password-hint" (click)="fillForm('admin')">
+        Пароль для всех: <code>{{ commonPassword }}</code>
+      </div>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label>Логин</label>
+        <input formControlName="userName" placeholder="Логин" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label>Пароль</label>
+        <input formControlName="password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn-login">
+        {{ isLoading ? 'Проверка...' : 'Войти' }}
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <a routerLink="/">Вернуться на главную</a>
+    </div>
+  </div>
+</div>

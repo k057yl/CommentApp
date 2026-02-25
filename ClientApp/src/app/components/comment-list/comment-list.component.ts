@@ -11,79 +11,54 @@ import { CommentFormComponent } from '../comment-form/comment-form.component';
   selector: 'app-comment-list',
   standalone: true,
   imports: [CommonModule, CommentItemComponent, CommentFormComponent, RouterLink],
-  template: `
-    <div class="container">
-      <h2>Обсуждение</h2>
-
-      <div class="auth-section">
-        @if (auth.isLoggedIn() | async) {
-          <div class="form-card">
-            <h3>Оставить комментарий</h3>
-            <app-comment-form (commentCreated)="loadComments()"></app-comment-form>
-          </div>
-        } @else {
-          <div class="login-alert">
-            <p>Чтобы оставлять комментарии, пожалуйста, <a routerLink="/login">войдите в систему</a>.</p>
-          </div>
-        }
-      </div>
-
-      <hr />
-
-      <div class="comments-list">
-        @for (comment of comments; track comment.id) {
-          <app-comment-item 
-            [comment]="comment" 
-            (commentCreated)="loadComments()">
-          </app-comment-item>
-        } @empty {
-          <p>Комментариев пока нет. Будьте первым!</p>
-        }
-      </div>
-    </div>
-  `,
-styles: [`
-  .container { max-width: 900px; margin: 2rem auto; font-family: 'Inter', sans-serif; }
-  h2 { font-weight: 800; color: #1a202c; margin-bottom: 1.5rem; }
-  
-  .auth-section { 
-    background: #ffffff; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .login-alert {
-    background: #f7fafc;
-    border: 2px dashed #e2e8f0;
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    color: #4a5568;
-    a { color: #3182ce; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
-  }
-
-  .comments-list { display: flex; flex-direction: column; gap: 1.5rem; }
-`]
+  templateUrl: './comment-list.component.html',
+  styleUrl: './comment-list.component.scss'
 })
 export class CommentListComponent implements OnInit {
   public auth = inject(AuthService);
   private commentService = inject(CommentService);
+
+  page = 1;
+  pageSize = 25;
+  sortBy = 'date';
+  sortOrder: 'asc' | 'desc' = 'desc';
+  totalCount = 0;
   
   comments: Comment[] = [];
 
   ngOnInit() {
     this.loadComments();
+    this.commentService.onNewComment(() => {
+      this.loadComments();
+    });
+  }
+
+  changePage(newPage: number) {
+    this.page = newPage;
+    this.loadComments();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  changeSort(field: string) {
+    if (this.sortBy === field) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortBy = field;
+      this.sortOrder = 'desc';
+    }
+    this.loadComments();
   }
 
   loadComments() {
-    this.commentService.getComments().subscribe({
-      next: (res) => {
-        this.comments = res.items || res; 
-        console.log('Комментарии загружены:', this.comments);
-      },
-      error: (err) => console.error('Ошибка загрузки:', err)
-    });
+    this.commentService.getComments(this.page, this.pageSize, this.sortBy, this.sortOrder)
+      .subscribe({
+        next: (res) => {
+          this.comments = res.items || [];
+          this.totalCount = res.totalCount || 0;
+        },
+        error: (err) => {
+          this.comments = err.items || [];
+        }
+      });
   }
 }

@@ -1,6 +1,8 @@
-﻿using CommentApp.Models.DTOs;
+﻿using CommentApp.Hubs;
+using CommentApp.Models.DTOs;
 using CommentApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CommentApp.Controllers
 {
@@ -10,24 +12,29 @@ namespace CommentApp.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly IFileService _fileService;
+        private readonly IHubContext<CommentHub> _hubContext;
 
-        public CommentsController(ICommentService commentService, IFileService fileService)
+        public CommentsController(ICommentService commentService, IFileService fileService, IHubContext<CommentHub> hubContext)
         {
             _commentService = commentService;
             _fileService = fileService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 25)
+        public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 25, 
+            [FromQuery] string sortBy = "date", [FromQuery] string sortOrder = "desc")
         {
-            var (items, totalCount) = await _commentService.GetCommentsPagedAsync(page, pageSize);
+            var (items, totalCount) = await _commentService.GetCommentsPagedAsync(page, pageSize, sortBy, sortOrder);
 
             return Ok(new
             {
                 Items = items,
                 TotalCount = totalCount,
                 Page = page,
-                PageSize = pageSize
+                PageSize = pageSize,
+                SortBy = sortBy,
+                SortOrder = sortOrder
             });
         }
 
@@ -59,6 +66,8 @@ namespace CommentApp.Controllers
             }
 
             var result = await _commentService.CreateCommentAsync(request, imagePath, textFilePath);
+
+            await _hubContext.Clients.All.SendAsync("ReceiveComment");
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }

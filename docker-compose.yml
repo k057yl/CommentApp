@@ -1,23 +1,31 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
+    container_name: comments_db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: comments_db
+      POSTGRES_DB: CommentDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Alesha
     ports:
       - "5432:5432"
 
-  cache:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-
-  api:
+  backend:
     build: .
+    container_name: comments_api
     depends_on:
       - db
-      - cache
+    volumes:
+      - ./uploads:/app/wwwroot/uploads
     environment:
-      ConnectionStrings__Default: "Host=db;Database=comments_db;Username=user;Password=password"
-      Redis__ConnectionString: "cache:6379"
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CommentDb;Username=postgres;Password=Alesha
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5000:8080"
+
+  frontend:
+    build: ./ClientApp
+    container_name: comments_ui
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"

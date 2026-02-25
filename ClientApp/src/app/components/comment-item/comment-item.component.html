@@ -15,7 +15,7 @@
           @if (comment.imageUrl) {
             <div class="attachment-image">
               <a [href]="comment.imageUrl" target="_blank">
-                <img [src]="comment.imageUrl" alt="прикрепленное изображение">
+                <img [src]="comment.imageUrl" alt="прикрепленное изображение" loading="lazy">
               </a>
             </div>
           }

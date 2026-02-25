@@ -28,6 +28,9 @@ namespace CommentApp.Extensions
                 });
             });
 
+            services.AddResponseCaching();
+            services.AddSignalR();
+
             services.AddIdentityCore<IdentityUser>(options => {
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 4;
@@ -79,6 +82,7 @@ namespace CommentApp.Extensions
                 return sanitizer;
             });
 
+            services.AddMemoryCache();
             return services;
         }
     }

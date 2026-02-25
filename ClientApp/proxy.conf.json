@@ -4,20 +4,14 @@
     "secure": false,
     "changeOrigin": true
   },
-  "/register": {
+  "/commentHub": {
     "target": "https://localhost:7179",
-    "secure": false
+    "secure": false,
+    "ws": true,
+    "changeOrigin": true
   },
-  "/login": {
-    "target": "https://localhost:7179",
-    "secure": false
-  },
-  "/captcha": {
-    "target": "https://localhost:7179",
-    "secure": false
-  },
-  "/uploads": {
-    "target": "https://localhost:7179",
-    "secure": false
-  }
+  "/register": { "target": "https://localhost:7179", "secure": false, "changeOrigin": true },
+  "/login": { "target": "https://localhost:7179", "secure": false, "changeOrigin": true },
+  "/captcha": { "target": "https://localhost:7179", "secure": false, "changeOrigin": true },
+  "/uploads": { "target": "https://localhost:7179", "secure": false, "changeOrigin": true }
 }

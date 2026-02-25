@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+    background-color: #fff9c4;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: transparent;
+  }
+}
+
+.comment-item-card {
+  animation: slideUpFade 0.5s ease-out;
+}

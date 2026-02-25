@@ -1,0 +1,64 @@
+<div class="container">
+  <header class="welcome-header">
+    <h1>CommentApp <small>v1.0</small></h1>
+    <p>Проект выполнен в рамках тестового задания для <strong>dZENcode</strong></p>
+  </header>
+
+  <div class="auth-section">
+    @if (auth.isLoggedIn() | async) {
+      <div class="form-card">
+        <h3>Оставить комментарий</h3>
+        <app-comment-form (commentCreated)="loadComments()"></app-comment-form>
+      </div>
+    } @else {
+      <div class="login-alert">
+        <p>Чтобы оставлять комментарии, пожалуйста, <a routerLink="/login">войдите в систему</a>.</p>
+      </div>
+    }
+  </div>
+
+  <div class="sorting-bar">
+    <span class="sort-label">Сортировать по:</span>
+    <div class="sort-buttons">
+      <button (click)="changeSort('userName')" [class.active]="sortBy === 'userName'">
+        Имя {{(sortBy === 'userName') ? (sortOrder === 'asc' ? '↑' : '↓') : ''}}
+      </button>
+      <button (click)="changeSort('email')" [class.active]="sortBy === 'email'">
+        E-mail {{(sortBy === 'email') ? (sortOrder === 'asc' ? '↑' : '↓') : ''}}
+      </button>
+      <button (click)="changeSort('date')" [class.active]="sortBy === 'date'">
+        Дата {{(sortBy === 'date') ? (sortOrder === 'asc' ? '↑' : '↓') : ''}}
+      </button>
+    </div>
+  </div>
+
+  <div class="comments-list">
+    @for (comment of comments; track comment.id) {
+      <app-comment-item 
+        [comment]="comment" 
+        (commentCreated)="loadComments()">
+      </app-comment-item>
+    } @empty {
+      <div class="empty-state">
+        <p>Комментариев пока нет. Будьте первым!</p>
+      </div>
+    }
+  </div>
+  <div class="pagination-wrapper" *ngIf="totalCount > pageSize">
+    <button 
+        (click)="changePage(page - 1)" 
+        [disabled]="page === 1" 
+        class="btn-nav">
+        ← Назад
+    </button>
+    
+    <span class="page-info">Страница {{ page }}</span>
+    
+    <button 
+        (click)="changePage(page + 1)" 
+        [disabled]="comments.length < pageSize" 
+        class="btn-nav">
+        Вперед →
+    </button>
+    </div>
+</div>

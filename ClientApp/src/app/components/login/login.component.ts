@@ -1,36 +1,50 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
-    <div class="login-box">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <input formControlName="userName" placeholder="Логин">
-        <input formControlName="password" type="password" placeholder="Пароль">
-        <button type="submit" [disabled]="loginForm.invalid">Войти</button>
-      </form>
-    </div>
-  `
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  isLoading = false;
+
   loginForm = this.fb.group({
-    userName: ['', Validators.required],
-    password: ['', Validators.required]
+    userName: ['', [Validators.required, Validators.minLength(3)]],
+    password: ['', [Validators.required, Validators.minLength(4)]]
   });
 
+  testAccounts = ['admin', 'developer', 'tester'];
+  commonPassword = 'Qwe_123!'
+
+  fillForm(userName: string) {
+    this.loginForm.patchValue({
+      userName: userName,
+      password: this.commonPassword
+    });
+  }
+
   onSubmit() {
+    if (this.loginForm.invalid) return;
+
+    this.isLoading = true;
     this.auth.login(this.loginForm.value).subscribe({
-      next: () => this.router.navigate(['/']),
-      error: () => alert('Неверный логин или пароль')
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert('Неверный логин или пароль');
+      }
     });
   }
 }
