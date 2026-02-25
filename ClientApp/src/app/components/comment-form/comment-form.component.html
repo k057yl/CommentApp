@@ -1,35 +1,56 @@
-<div class="form-container">
-  <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
-    <div class="row">
-      <input formControlName="userName" placeholder="Имя пользователя*">
-      <input formControlName="email" placeholder="Email*">
-      <input formControlName="homePage" placeholder="Home Page">
+<div class="form-wrapper">
+  <form [formGroup]="commentForm" (ngSubmit)="onSubmit()" class="modern-form">
+    <div class="user-info">
+      <div class="mini-avatar">{{ commentForm.getRawValue().userName[0] }}</div>
+      <span>Писать как <strong>{{ commentForm.getRawValue().userName }}</strong></span>
     </div>
 
-    <textarea formControlName="text" placeholder="Ваш комментарий* (Разрешены <a>, <code>, <i>, <strong>)"></textarea>
+    <div class="textarea-section">
+      <textarea formControlName="text" placeholder="Ваше сообщение..."></textarea>
+      
+      <div class="attachment-bar">
+        <div class="file-buttons">
+          <label class="attach-btn">
+            <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*" hidden>
+            📸 Фото
+          </label>
+          <label class="attach-btn">
+            <input type="file" (change)="onFileSelected($event, 'text')" accept=".txt" hidden>
+            📄 Текст
+          </label>
+        </div>
 
-    <div class="file-inputs">
-      <label>Картинка (JPG/PNG/GIF): <input type="file" (change)="onFileSelected($event, 'image')" accept="image/*"></label>
-      <label>Файл (.txt): <input type="file" (change)="onFileSelected($event, 'text')" accept=".txt"></label>
+        <div class="chips-container">
+          @if (imageName) {
+            <span class="file-chip">🖼️ {{ imageName }} <b (click)="removeFile('image')">×</b></span>
+          }
+          @if (textFileName) {
+            <span class="file-chip">📝 {{ textFileName }} <b (click)="removeFile('text')">×</b></span>
+          }
+        </div>
+      </div>
     </div>
 
-    <div class="captcha-row">
-      <span class="captcha-badge">{{ captchaCode }}</span>
-      <input formControlName="captcha" placeholder="Введите код">
-      <button type="button" (click)="refreshCaptcha()">🔄</button>
-    </div>
+    <div class="form-footer">
+      <div class="captcha-styled">
+        <div class="visual-code">{{ captchaCode }}</div>
+        <input formControlName="captcha" placeholder="Код">
+        <button type="button" (click)="refreshCaptcha()">🔄</button>
+      </div>
 
-    <div class="actions">
-      <button type="button" (click)="togglePreview()">{{ isPreview ? 'Редактировать' : 'Предпросмотр' }}</button>
-      <button type="submit" [disabled]="commentForm.invalid">Отправить</button>
+      <div class="actions">
+        <button type="button" class="btn-preview" (click)="togglePreview()">
+          {{ isPreview ? 'Правка' : 'Предпросмотр' }}
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="commentForm.invalid">Отправить</button>
+      </div>
     </div>
   </form>
 
-  <div class="preview-box" *ngIf="isPreview">
-    <h3>Предпросмотр:</h3>
-    <div class="comment-preview">
-      <strong>{{ commentForm.value.userName }}</strong>:
-      <div [innerHTML]="commentForm.value.text"></div>
+  @if (isPreview && previewContent) {
+    <div class="live-preview">
+      <div class="preview-tag">ПРЕДПРОСМОТР</div>
+      <div class="preview-body" [innerHTML]="previewContent"></div>
     </div>
-  </div>
+  }
 </div>

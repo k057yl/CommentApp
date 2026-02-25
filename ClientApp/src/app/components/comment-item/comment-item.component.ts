@@ -1,24 +1,27 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Comment } from '../../models/comment.model';
+import { CommentFormComponent } from '../comment-form/comment-form.component';
 
 @Component({
   selector: 'app-comment-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CommentFormComponent],
   templateUrl: './comment-item.component.html',
   styleUrl: './comment-item.component.scss'
 })
 export class CommentItemComponent {
-  @Input({ required: true }) comment!: Comment;
+  @Input() comment!: Comment;
+  @Output() commentCreated = new EventEmitter<void>();
 
-  @Output() reply = new EventEmitter<Comment>();
+  isReplying = false;
 
-  formatDate(date: string) {
-    return new Date(date).toLocaleString();
+  toggleReply() {
+    this.isReplying = !this.isReplying;
   }
 
-  onReply() {
-    this.reply.emit(this.comment);
+  onReplyCreated() {
+    this.isReplying = false;
+    this.commentCreated.emit();
   }
 }

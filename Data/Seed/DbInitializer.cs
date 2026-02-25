@@ -7,18 +7,23 @@ namespace CommentApp.Data.Seed
     {
         public static async Task SeedAsync(UserManager<IdentityUser> userManager)
         {
-            var hasUsers = await userManager.Users.AnyAsync<IdentityUser>();
-
-            if (!hasUsers)
+            if (!await userManager.Users.AnyAsync())
             {
-                var user = new IdentityUser
+                var seedData = new List<(IdentityUser User, string Password)>
                 {
-                    UserName = "admin",
-                    Email = "admin@test.com",
-                    EmailConfirmed = true
+                    (new IdentityUser { UserName = "admin", Email = "admin@test.com", EmailConfirmed = true }, "Qwe_123!"),
+                    (new IdentityUser { UserName = "developer", Email = "dev@test.com", EmailConfirmed = true }, "Qwe_123!"),
+                    (new IdentityUser { UserName = "tester", Email = "test@test.com", EmailConfirmed = true }, "Qwe_123!")
                 };
 
-                await userManager.CreateAsync(user, "Qwe_123");
+                foreach (var (user, password) in seedData)
+                {
+                    var result = await userManager.CreateAsync(user, password);
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception($"Failed to seed user {user.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                    }
+                }
             }
         }
     }

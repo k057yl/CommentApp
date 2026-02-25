@@ -1,7 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommentService } from '../../services/comment.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-comment-form',
@@ -14,24 +15,38 @@ export class CommentFormComponent implements OnInit {
   @Input() parentId: number | null = null;
   @Output() commentCreated = new EventEmitter<void>();
 
+  private fb = inject(FormBuilder);
+  private commentService = inject(CommentService);
+  private auth = inject(AuthService);
+
   commentForm!: FormGroup;
   captchaCode: string = '';
   selectedImage: File | null = null;
   selectedTextFile: File | null = null;
   isPreview: boolean = false;
-
-  constructor(private fb: FormBuilder, private commentService: CommentService) {}
+  imageName: string = '';
+  textFileName: string = '';
 
   ngOnInit() {
     this.commentForm = this.fb.group({
-      userName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      homePage: [''],
+      userName: [{ value: '', disabled: true }, [Validators.required]],
+      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
       text: ['', [Validators.required]],
       captcha: ['', [Validators.required]]
     });
 
+    this.loadUserData();
     this.refreshCaptcha();
+  }
+
+  private loadUserData() {
+    const name = this.auth.getUserName();
+    if (name) {
+      this.commentForm.patchValue({
+        userName: name,
+        email: `${name}@test.com`
+      });
+    }
   }
 
   refreshCaptcha() {
@@ -42,8 +57,29 @@ export class CommentFormComponent implements OnInit {
 
   onFileSelected(event: any, type: 'image' | 'text') {
     const file = event.target.files[0];
-    if (type === 'image') this.selectedImage = file;
-    else this.selectedTextFile = file;
+    if (!file) return;
+
+    if (type === 'image') {
+      this.selectedImage = file;
+      this.imageName = file.name;
+    } else {
+      this.selectedTextFile = file;
+      this.textFileName = file.name;
+    }
+  }
+
+  removeFile(type: 'image' | 'text') {
+    if (type === 'image') {
+      this.selectedImage = null;
+      this.imageName = '';
+    } else {
+      this.selectedTextFile = null;
+      this.textFileName = '';
+    }
+  }
+
+  get previewContent() {
+    return this.commentForm.get('text')?.value || '';
   }
 
   togglePreview() {
@@ -54,8 +90,10 @@ export class CommentFormComponent implements OnInit {
     if (this.commentForm.invalid) return;
 
     const formData = new FormData();
-    Object.keys(this.commentForm.value).forEach(key => {
-      formData.append(key, this.commentForm.value[key]);
+    const formValues = this.commentForm.getRawValue();
+    
+    Object.keys(formValues).forEach(key => {
+      formData.append(key, formValues[key]);
     });
 
     if (this.parentId) formData.append('parentId', this.parentId.toString());
@@ -64,7 +102,15 @@ export class CommentFormComponent implements OnInit {
 
     this.commentService.createComment(formData).subscribe({
       next: () => {
-        this.commentForm.reset();
+        this.commentForm.patchValue({ text: '', captcha: '' });
+        this.selectedImage = null;
+        this.selectedTextFile = null;
+        this.imageName = '';
+        this.textFileName = '';
+
+        const fileInputs = document.querySelectorAll('input[type="file"]') as NodeListOf<HTMLInputElement>;
+        fileInputs.forEach(input => input.value = '');
+
         this.commentCreated.emit();
         this.refreshCaptcha();
         this.isPreview = false;

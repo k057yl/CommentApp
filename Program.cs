@@ -10,29 +10,43 @@ builder.Services.AddBusinessServices();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    await DbInitializer.SeedAsync(userManager);
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+        await DbInitializer.SeedAsync(userManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ошибка при инициализации данных (Seed)");
+    }
 }
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseCors("AngularPolicy");
-app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession();
+
 app.MapControllers();
-app.MapIdentityApi<IdentityUser>();
+
 
 app.Run();

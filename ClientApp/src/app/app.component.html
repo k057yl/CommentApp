@@ -1,14 +1,22 @@
+<nav class="navbar">
+  <div class="container">
+    <a routerLink="/" class="logo">SPA Comments</a>
+    
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Главная</a>
+      
+      <ng-container *ngIf="auth.isLoggedIn() | async; else loginBtn">
+        <span class="user-greeting">Привет, <b>{{ userName }}</b></span>
+        <a href="javascript:void(0)" (click)="logout()">Выйти</a>
+      </ng-container>
+
+      <ng-template #loginBtn>
+        <a routerLink="/login" routerLinkActive="active">Войти</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
+
 <main class="main-container">
-  <h1>SPA Comments App</h1>
-  
-  <section class="form-section">
-    <h3>Оставить новый отзыв</h3>
-    <app-comment-form (commentCreated)="onCommentCreated()"></app-comment-form>
-  </section>
-
-  <hr>
-
-  <section class="list-section">
-    <app-comment-list #commentList></app-comment-list>
-  </section>
+  <router-outlet></router-outlet>
 </main>

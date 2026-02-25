@@ -1,22 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  constructor(private http: HttpClient) { }
+  private readonly TOKEN_KEY = 'auth_token';
+  private authStatus = new BehaviorSubject<boolean>(this.hasToken());
 
-  login(data: any) {
-    return this.http.post('/login', data).pipe(
-      tap(() => {
-        localStorage.setItem('isLoggedIn', 'true');
+  constructor(private http: HttpClient) {}
+
+  login(credentials: any) {
+    return this.http.post<{ token: string }>('/api/Auth/login', credentials).pipe(
+      tap(res => {
+        localStorage.setItem(this.TOKEN_KEY, res.token);
+        this.authStatus.next(true);
       })
     );
   }
 
-  register(data: any) {
-    return this.http.post('/register', data);
+  getUserName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const decoded: any = jwtDecode(token);
+    return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || decoded.sub;
+  }
+
+  logout() {
+    localStorage.removeItem(this.TOKEN_KEY);
+    this.authStatus.next(false);
+  }
+
+  getToken() {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  isLoggedIn() {
+    return this.authStatus.asObservable();
+  }
+
+  private hasToken(): boolean {
+    return !!localStorage.getItem(this.TOKEN_KEY);
   }
 }

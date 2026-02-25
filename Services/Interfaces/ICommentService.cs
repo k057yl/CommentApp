@@ -7,6 +7,6 @@ namespace CommentApp.Services.Interfaces
     {
         Task<Comment> CreateCommentAsync(CreateCommentRequest request, string? imagePath, string? textFilePath);
         Task<List<Comment>> GetRootCommentsAsync();
-        Task<(List<Comment> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize);
+        Task<(List<CommentDisplayDto> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize);
     }
 }

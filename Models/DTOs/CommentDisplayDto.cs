@@ -9,5 +9,6 @@
         public string? ImageUrl { get; set; }
         public string? TextFileUrl { get; set; }
         public List<CommentDisplayDto> Replies { get; set; } = new();
+        public int? ParentId { get; set; }
     }
 }

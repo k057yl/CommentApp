@@ -1,24 +1,23 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { CommentListComponent } from './components/comment-list/comment-list.component';
-import { CommentFormComponent } from './components/comment-form/comment-form.component';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule, 
-    CommentListComponent,
-    CommentFormComponent
-  ],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  @ViewChild('commentList') commentList!: CommentListComponent;
+  auth = inject(AuthService);
 
-  onCommentCreated() {
-    this.commentList.ngOnInit(); 
+  get userName() {
+    return this.auth.getUserName();
+  }
+
+  logout() {
+    this.auth.logout();
   }
 }

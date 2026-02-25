@@ -9,6 +9,8 @@ export interface Comment {
   textFilePath?: string;
   parentId?: number;
   replies: Comment[];
+  imageUrl?: string | null;
+  textFileUrl?: string | null;
 }
 
 export interface PagedResponse<T> {

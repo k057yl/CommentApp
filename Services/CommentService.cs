@@ -26,7 +26,6 @@ namespace CommentApp.Services
             {
                 UserName = request.UserName,
                 Email = request.Email,
-                HomePage = request.HomePage,
                 Text = cleanText,
                 ParentId = request.ParentId,
                 CreatedAt = DateTime.UtcNow,
@@ -49,21 +48,47 @@ namespace CommentApp.Services
                 .ToListAsync();
         }
 
-        public async Task<(List<Comment> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize)
+        public async Task<(List<CommentDisplayDto> Items, int TotalCount)> GetCommentsPagedAsync(int page, int pageSize)
         {
-            var query = _context.Comments
-                .Where(c => c.ParentId == null);
-
+            var query = _context.Comments.Where(c => c.ParentId == null);
             var totalCount = await query.CountAsync();
 
-            var items = await query
+            var rootIds = await query
                 .OrderByDescending(c => c.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Include(c => c.Replies)
+                .Select(c => c.Id)
                 .ToListAsync();
 
-            return (items, totalCount);
+            var allComments = await _context.Comments
+                .Select(c => new CommentDisplayDto
+                {
+                    Id = c.Id,
+                    UserName = c.UserName,
+                    Text = c.Text,
+                    CreatedAt = c.CreatedAt,
+                    ImageUrl = c.ImagePath,
+                    TextFileUrl = c.TextFilePath,
+                    ParentId = c.ParentId
+                })
+                .ToListAsync();
+
+            var lookup = allComments.ToDictionary(c => c.Id);
+            var rootNodes = new List<CommentDisplayDto>();
+
+            foreach (var comment in allComments)
+            {
+                if (comment.ParentId.HasValue && lookup.TryGetValue(comment.ParentId.Value, out var parent))
+                {
+                    parent.Replies.Add(comment);
+                }
+                else if (rootIds.Contains(comment.Id))
+                {
+                    rootNodes.Add(comment);
+                }
+            }
+
+            return (rootNodes, totalCount);
         }
     }
 }

@@ -1,142 +1,258 @@
-.form-container {
-  max-width: 800px;
-  margin: 20px 0;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+// Палитра в стиле современного SaaS
+$primary: #3182ce;
+$primary-hover: #2b6cb0;
+$bg-main: #ffffff;
+$bg-muted: #f7fafc;
+$border-color: #e2e8f0;
+$text-dark: #2d3748;
+$text-muted: #718096;
+$success-chip: #e6fffa;
+$success-text: #2c7a7b;
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
+.form-wrapper {
+  max-width: 100%;
+  margin-top: 1rem;
 
-  .row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  .modern-form {
+    background: $bg-main;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
 
-    input {
-      flex: 1;
-      min-width: 200px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-
-      &:focus {
-        border-color: #007bff;
-        outline: none;
-      }
+    &:focus-within {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-color: lighten($primary, 20%);
     }
   }
+}
+
+// Шапка с инфо о пользователе
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: $bg-muted;
+  border-bottom: 1px solid $border-color;
+  font-size: 0.9rem;
+  color: $text-dark;
+
+  .mini-avatar {
+    width: 28px;
+    height: 28px;
+    background: $primary;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  strong {
+    color: $primary;
+  }
+}
+
+// Секция ввода текста
+.textarea-section {
+  padding: 16px;
 
   textarea {
     width: 100%;
-    height: 120px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
+    min-height: 120px;
+    border: none;
+    outline: none;
     font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: $text-dark;
+    resize: vertical;
 
-    &:focus {
-      border-color: #007bff;
-      outline: none;
+    &::placeholder {
+      color: $text-muted;
     }
   }
+}
 
-  .file-inputs {
+// Панель вложений
+.attachment-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid $bg-muted;
+
+  .file-buttons {
     display: flex;
-    flex-direction: column;
     gap: 8px;
-    font-size: 0.9rem;
-    color: #666;
 
-    input {
-      margin-left: 10px;
+    .attach-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      background: $bg-muted;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: $border-color;
+        transform: translateY(-1px);
+      }
     }
   }
+}
 
-  .captcha-row {
+// Чипы файлов
+.chips-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .file-chip {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 6px;
+    padding: 4px 10px;
+    background: $success-chip;
+    color: $success-text;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
 
-    .captcha-badge {
-      background: #333;
-      color: #fff;
-      padding: 8px 15px;
+    b {
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      margin-left: 4px;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #e53e3e;
+      }
+    }
+  }
+}
+
+// Футер с капчей и кнопками
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: $bg-muted;
+  border-top: 1px solid $border-color;
+
+  .captcha-styled {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .visual-code {
+      background: #1a202c; // Dark Slate
+      color: #4fd1c5; // Neon Teal
+      padding: 6px 14px;
+      border-radius: 6px;
       font-family: 'Courier New', Courier, monospace;
-      font-weight: bold;
-      font-size: 1.2rem;
+      font-weight: 900;
       letter-spacing: 3px;
-      border-radius: 4px;
+      font-style: italic;
       user-select: none;
-      text-decoration: line-through;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
 
     input {
-      width: 120px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      width: 90px;
+      padding: 6px 10px;
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      outline: none;
+
+      &:focus {
+        border-color: $primary;
+      }
     }
 
     button {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      transition: transform 0.3s;
+      &:active { transform: rotate(180deg); }
     }
   }
 
   .actions {
     display: flex;
-    gap: 10px;
-    justify-content: flex-end;
+    gap: 12px;
 
     button {
-      padding: 10px 20px;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
+      padding: 8px 18px;
+      border-radius: 8px;
       font-weight: 600;
-      transition: background 0.2s;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
 
-      &[type="button"] {
-        background-color: #6c757d;
-        color: white;
-        &:hover { background-color: #5a6268; }
+      &.btn-preview {
+        background: transparent;
+        color: $text-muted;
+        border: 1px solid transparent;
+        &:hover { color: $text-dark; background: #edf2f7; }
       }
 
-      &[type="submit"] {
-        background-color: #007bff;
+      &.btn-primary {
+        background: $primary;
         color: white;
-        &:hover:not(:disabled) { background-color: #0069d9; }
-        &:disabled { background-color: #ccc; cursor: not-allowed; }
+        border: none;
+        &:hover:not(:disabled) { background: $primary-hover; transform: translateY(-1px); }
+        &:disabled { opacity: 0.5; cursor: not-allowed; }
       }
     }
   }
+}
 
-  .preview-box {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fffde7;
-    border: 1px dashed #fbc02d;
-    border-radius: 4px;
+// Живой предпросмотр
+.live-preview {
+  margin-top: 1.5rem;
+  background: #fffaf0; // Теплый желтоватый фон
+  border: 1px dashed #f6ad55;
+  border-radius: 12px;
+  padding: 16px;
+  animation: fadeIn 0.3s ease-out;
 
-    h3 {
-      margin-top: 0;
-      font-size: 1rem;
-      color: #f57f17;
-    }
+  .preview-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #dd6b20;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
 
-    .comment-preview {
-      font-size: 0.95rem;
-      line-height: 1.5;
+  .preview-body {
+    color: $text-dark;
+    line-height: 1.6;
+    word-break: break-word;
+    
+    // Стили для разрешенных тегов внутри превью
+    ::ng-deep {
+      code { background: #edf2f7; padding: 2px 4px; border-radius: 4px; font-family: monospace; }
+      strong { font-weight: 700; }
+      a { color: $primary; text-decoration: underline; }
     }
   }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
