@@ -18,10 +18,12 @@ namespace CommentApp.Extensions
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
 
-            var allowedOrigins = configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>();
+            var allowedOrigins = configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>()
+                         ?? new[] { "http://localhost:4200", "https://k057yl.github.io" };
+
             services.AddCors(options => {
                 options.AddPolicy("AngularPolicy", policy => {
-                    policy.WithOrigins(allowedOrigins ?? new[] { "http://localhost:4200" })
+                    policy.WithOrigins(allowedOrigins)
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
@@ -62,6 +64,8 @@ namespace CommentApp.Extensions
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             return services;

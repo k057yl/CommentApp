@@ -57,7 +57,8 @@ export class CommentListComponent implements OnInit {
           this.totalCount = res.totalCount || 0;
         },
         error: (err) => {
-          this.comments = err.items || [];
+          console.error('Ошибка загрузки:', err);
+          this.comments = []; 
         }
       });
   }

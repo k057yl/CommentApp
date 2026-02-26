@@ -14,14 +14,14 @@
         <div class="comment-attachments">
           @if (comment.imageUrl) {
             <div class="attachment-image">
-              <a [href]="comment.imageUrl" target="_blank">
-                <img [src]="comment.imageUrl" alt="прикрепленное изображение" loading="lazy">
+              <a [href]="env.imageBaseUrl + comment.imageUrl" target="_blank">
+                <img [src]="env.imageBaseUrl + comment.imageUrl" alt="прикрепленное изображение" loading="lazy">
               </a>
             </div>
           }
           @if (comment.textFileUrl) {
             <div class="attachment-file">
-              <a [href]="comment.textFileUrl" target="_blank" class="file-link">
+              <a [href]="env.imageBaseUrl + comment.textFileUrl" target="_blank" class="file-link">
                 <i class="icon">📄</i> Скачать текстовый файл
               </a>
             </div>
