@@ -20,14 +20,14 @@ services:
     volumes:
       - ./uploads:/app/wwwroot/uploads
     environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CommentDb;Username=postgres;Password=Alesha
+      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
       - ASPNETCORE_ENVIRONMENT=Development
-      - Cloudinary__CloudName=Gala2020
-      - Cloudinary__ApiKey=118386669864924
-      - Cloudinary__ApiSecret=LTaBB6tCrHvpyRnBE3gXjIrrmCY
-      - JWT__ValidAudience=http://localhost:4200
-      - JWT__ValidIssuer=http://localhost:5000
-      - JWT__Secret=SuperSecretKeyForMyAmazingCommentApp123!
+      - Cloudinary__CloudName=${CLOUDINARY_NAME}
+      - Cloudinary__ApiKey=${CLOUDINARY_KEY}
+      - Cloudinary__ApiSecret=${CLOUDINARY_SECRET}
+      - JWT__ValidAudience=${JWT_AUDIENCE}
+      - JWT__ValidIssuer=${JWT_ISSUER}
+      - JWT__Secret=${JWT_SECRET}
     ports:
       - "5000:8080"
     restart: on-failure

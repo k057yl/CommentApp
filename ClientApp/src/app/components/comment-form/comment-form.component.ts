@@ -91,14 +91,25 @@ export class CommentFormComponent implements OnInit {
 
     const formData = new FormData();
     const formValues = this.commentForm.getRawValue();
+
+    formData.append('Text', formValues.text);
+    formData.append('Captcha', formValues.captcha);
     
     Object.keys(formValues).forEach(key => {
       formData.append(key, formValues[key]);
     });
 
-    if (this.parentId) formData.append('parentId', this.parentId.toString());
-    if (this.selectedImage) formData.append('image', this.selectedImage);
-    if (this.selectedTextFile) formData.append('textFile', this.selectedTextFile);
+    if (this.parentId) {
+      formData.append('ParentId', this.parentId.toString());
+    }
+
+    if (this.selectedImage) {
+      formData.append('Image', this.selectedImage);
+    }
+
+    if (this.selectedTextFile) {
+      formData.append('TextFile', this.selectedTextFile);
+    }
 
     this.commentService.createComment(formData).subscribe({
       next: () => {

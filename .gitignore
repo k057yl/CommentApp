@@ -1,4 +1,5 @@
 # --- .NET / Visual Studio ---
+.env
 bin/
 obj/
 .vs/
