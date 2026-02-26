@@ -1,21 +1,35 @@
-Полнофункциональная система древовидных комментариев с real-time обновлением и серверной оптимизацией.
+Полнофункциональная система древовидных комментариев с real-time обновлением, облачным хранилищем медиафайлов и серверной оптимизацией.
 
-Стек технологий 
-Backend: .NET 10 (Bleeding Edge) 
-Frontend: Angular 18 (Standalone components, Reactive Forms) 
-Database: PostgreSQL 15 Real-time: SignalR (WebSockets) 
-Infrastructure: Docker & Docker Compose
+Стек технологий
+Backend: .NET 9/10 (ASP.NET Core Web API)
+
+Frontend: Angular 19 (Standalone components, Reactive Forms)
+
+Database: PostgreSQL (Hosted on Render)
+
+Cloud Storage: Cloudinary API (для изображений и текстовых файлов)
+
+Real-time: SignalR (WebSockets)
+
+Deployment: GitHub Pages (Client) & Render (API)
 
 Ключевые особенности
+Cloud Media Integration: Автоматическая загрузка, ресайз и оптимизация изображений (320x240) через ImageSharp перед отправкой в облако Cloudinary.
 
-High-Performance Tree Building: Алгоритм сборки дерева комментариев на бэкенде.
-Smart Caching & Versioning: Реализован IMemoryCache с логикой инвалидации. Кэш сбрасывается мгновенно при добавлении нового комментария через SignalR,
-гарантируя актуальность данных.
-Advanced Security: XSS Sanitization: Используется HtmlSanitizer для очистки пользовательского ввода. Server-side Captcha: Защита от спама через сессии.
-Resilient Infrastructure: Настроена Retry-логика подключения к БД в Docker, что гарантирует успешный запуск всей системы одной командой.
+High-Performance Tree Building: Алгоритм сборки дерева комментариев на бэкенде с поддержкой бесконечной вложенности.
 
-Быстрый запуск Убедитесь, что у вас запущен Docker Desktop, и выполните команду в корне проекта:
+Smart Caching: Реализован IMemoryCache с логикой версионирования. Кэш инвалидируется автоматически при добавлении новых данных.
+
+Advanced Security:
+
+XSS Sanitization: Использование HtmlSanitizer для очистки пользовательского контента.
+
+Server-side Captcha: Защита от спама на основе сессий.
+
+Production Deployment: Настроена CORS-политика, сессии для кросс-доменных запросов и base-href для корректной работы SPA на GitHub Pages.
+
+Приложение развернуто и доступно по адресу: https://k057yl.github.io/CommentApp/
+
+Для локального запуска через Docker:
 
 docker-compose up --build
-
-Приложение будет доступно по адресу: http://localhost:4200
