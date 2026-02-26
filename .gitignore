@@ -1,0 +1,31 @@
+# --- .NET / Visual Studio ---
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# --- Database ---
+*.db
+*.db-journal
+
+# --- Angular / Node ---
+node_modules/
+dist/
+.angular/
+.editorconfig
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+wwwroot/uploads/*
+
+!wwwroot/uploads/.gitkeep
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
